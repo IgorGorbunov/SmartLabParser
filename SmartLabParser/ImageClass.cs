@@ -56,20 +56,53 @@ namespace SmartLabParser
         {
             Bitmap b = new Bitmap(Image);
             _verticalBorderNums = SetBorderNums
-                    (b, StartBorderX, Image.Size.Width);
+                    (b, StartBorderX, Image.Size.Width, true);
             _horizontalBorderNums = SetBorderNums
-                    (b, StartBorderY, Image.Size.Height);
+                    (b, StartBorderY, Image.Size.Height, false);
             
             Bitmap[,] bitmaps = GetTableCellImages();
             string[,] texts = Recognize(bitmaps);
+            AddToExcel(texts, excelPath, excelName);
         }
 
-        private List<int> SetBorderNums(Bitmap bitmap, int startBorderNum, int endOfBitmap)
+        private void AddToExcel(string[,] texts, string excelPath, string excelName)
+        {
+            ExcelClass xls = new ExcelClass();
+            try
+            {
+                xls.NewDocument();
+                string fullPath = Path.Combine(excelPath, excelName);
+                xls.SaveDocument(fullPath);
+                xls.OpenDocument(fullPath, false);
+                for (int i = 0; i < texts.GetLength(0); i++)
+                {
+                    for (int j = 0; j < texts.GetLength(1); j++)
+                    {
+                        xls.SetCellValue(j + 1, i + 1, texts[i, j].Trim());
+                    }
+                }
+            }
+            finally
+            {
+                xls.CloseDocumentSave();
+                xls.Dispose();
+            }
+        }
+
+        private List<int> SetBorderNums(Bitmap bitmap, int startBorderNum, int endOfBitmap, bool verticalBorders)
         {
             List<int> borderNums = new List<int>();
             for (int i = startBorderNum; i < endOfBitmap; i++)
             {
-                Color color = bitmap.GetPixel(i, startBorderNum);
+                Color color;
+                if (verticalBorders)
+                {
+                    color = bitmap.GetPixel(i, startBorderNum);
+                }
+                else
+                {
+                    color = bitmap.GetPixel(startBorderNum, i);
+                }
                 if (color.Name == TableBorderColorName)
                 {
                     borderNums.Add(i);

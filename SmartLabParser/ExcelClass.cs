@@ -47,7 +47,9 @@ public sealed class ExcelClass
 
 
 
-    //СОЗДАТЬ НОВЫЙ ДОКУМЕНТ
+    /// <summary>
+    /// СОЗДАТЬ НОВЫЙ ДОКУМЕНТ
+    /// </summary>
     public void NewDocument()
     {
         _xlWorkBook = _xlApp.Workbooks.Add(_misValue);
@@ -88,7 +90,10 @@ public sealed class ExcelClass
     }
 
 
-    //СОХРАНИТЬ ДОКУМЕНТ
+    /// <summary>
+    /// СОХРАНИТЬ ДОКУМЕНТ
+    /// </summary>
+    /// <param name="name"></param>
     public void SaveDocument(string name)
     {
         _xlApp.DisplayAlerts = true;

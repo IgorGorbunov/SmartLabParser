@@ -92,7 +92,7 @@ namespace SmartLabParser
                 directory = Path.Combine(Application.StartupPath, new Uri(site).Host, "zoomed");
                 Directory.CreateDirectory(directory);
                 imageClass.SaveAs(directory);
-                imageClass.RecognizeToExcel("", "");
+                imageClass.RecognizeToExcel(@"D:\Work\Coding\Github\repos\SmartLabParser\SmartLabParser\bin\Debug\smart-lab.ru\rAndreevLists", "1.xlsx");
                 //ImageToText(path);
             }
         }
