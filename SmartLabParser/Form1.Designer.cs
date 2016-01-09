@@ -32,9 +32,9 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.bttnStart = new System.Windows.Forms.Button();
             this.nudNpages = new System.Windows.Forms.NumericUpDown();
-            this.pbNpages = new System.Windows.Forms.ProgressBar();
+            this.pbNimages = new System.Windows.Forms.ProgressBar();
             this.label1 = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.pbNcellImages = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
@@ -54,11 +54,11 @@
             // 
             this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.progressBar1);
+            this.panel1.Controls.Add(this.pbNcellImages);
             this.panel1.Controls.Add(this.label1);
             this.panel1.Controls.Add(this.bttnStart);
             this.panel1.Controls.Add(this.nudNpages);
-            this.panel1.Controls.Add(this.pbNpages);
+            this.panel1.Controls.Add(this.pbNimages);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
@@ -92,12 +92,12 @@
             0,
             0});
             // 
-            // pbNpages
+            // pbNimages
             // 
-            this.pbNpages.Location = new System.Drawing.Point(26, 48);
-            this.pbNpages.Name = "pbNpages";
-            this.pbNpages.Size = new System.Drawing.Size(783, 10);
-            this.pbNpages.TabIndex = 0;
+            this.pbNimages.Location = new System.Drawing.Point(26, 48);
+            this.pbNimages.Name = "pbNimages";
+            this.pbNimages.Size = new System.Drawing.Size(783, 10);
+            this.pbNimages.TabIndex = 0;
             // 
             // label1
             // 
@@ -108,12 +108,12 @@
             this.label1.TabIndex = 3;
             this.label1.Text = "Страниц для копирования";
             // 
-            // progressBar1
+            // pbNcellImages
             // 
-            this.progressBar1.Location = new System.Drawing.Point(26, 78);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(783, 10);
-            this.progressBar1.TabIndex = 4;
+            this.pbNcellImages.Location = new System.Drawing.Point(26, 78);
+            this.pbNcellImages.Name = "pbNcellImages";
+            this.pbNcellImages.Size = new System.Drawing.Size(783, 10);
+            this.pbNcellImages.TabIndex = 4;
             // 
             // label2
             // 
@@ -157,11 +157,11 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button bttnStart;
         private System.Windows.Forms.NumericUpDown nudNpages;
-        private System.Windows.Forms.ProgressBar pbNpages;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label1;
+        public System.Windows.Forms.ProgressBar pbNimages;
+        public System.Windows.Forms.ProgressBar pbNcellImages;
     }
 }
 

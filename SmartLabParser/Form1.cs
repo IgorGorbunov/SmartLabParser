@@ -18,6 +18,7 @@ namespace SmartLabParser
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            Indicator.SetForm(this);
             const string encoding = "ISO-8859-1";
 
             webBrowser1.DocumentText = "";
@@ -84,9 +85,11 @@ namespace SmartLabParser
                 }
                 string originalFullName;
                 ImageClass imageClass = SavePicture(site, client, value.url, out originalFullName);
-                Resize(imageClass, site);
+                ResizeImage(imageClass, site);
                 SetXls(value.url, site, imageClass, originalFullName);
+                Indicator.IncDownloadImage();
             }
+            MessageBox.Show("That`s all!");
         }
 
         private static void SetXls(string url, string site, ImageClass imageClass, string origName)
@@ -129,7 +132,7 @@ namespace SmartLabParser
             return new ImageClass(origName);
         }
 
-        private static void Resize(ImageClass imageClass, string site)
+        private static void ResizeImage(ImageClass imageClass, string site)
         {
             imageClass.Resize(10);
             string directory = Path.Combine(Application.StartupPath, new Uri(site).Host, "zoomed");
@@ -146,7 +149,7 @@ namespace SmartLabParser
         private void bttnStart_Click(object sender, EventArgs e)
         {
             int nPages = (int) nudNpages.Value;
-            pbNpages.Maximum = nPages;
+            pbNimages.Maximum = nPages * 10;
             const string url = "http://smart-lab.ru/my/RomanAndreev/blog/all/";
             for (int i = 0; i < nPages; i++)
             {
@@ -160,8 +163,6 @@ namespace SmartLabParser
                     page = string.Format("{0}page{1}/", url, i + 1);
                 }
                 DownloadFiles(page);
-                pbNpages.Increment(1);
-                Application.DoEvents();
             }
         }
 

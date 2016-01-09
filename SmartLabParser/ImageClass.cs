@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.IO;
-using System.Windows.Forms;
 
 namespace SmartLabParser
 {
@@ -121,12 +120,14 @@ namespace SmartLabParser
 
         private static string[,] Recognize(Bitmap[,] bitmaps)
         {
+            Indicator.SetNcellImages(bitmaps.Length);
             string[,] result = new string[bitmaps.GetLength(0), bitmaps.GetLength(1)];
             for (int i = 0; i < bitmaps.GetLength(0); i++)
             {
                 for (int j = 0; j < bitmaps.GetLength(1); j++)
                 {
                     result[i, j] = Recognizer.Recognize(bitmaps[i, j], 10);
+                    Indicator.IncRecognizeCellImage();
                 }
             }
             return result;
