@@ -14,7 +14,7 @@ namespace SmartLabParser
 
         //private const string TableBorderColorName = "ffdfe1e2";   // x3,0
         private const string TableBorderColorName = "ffdfe1e2";     // x10,0
-        private const int StartBorderX = 30;
+        private const int StartBorderX = 30; // Должны быть одинаковы, иначе изменить метод SetBorderNums
         private const int StartBorderY = 30;
         private List <int> _verticalBorderNums;
         private List <int> _horizontalBorderNums;
@@ -55,36 +55,29 @@ namespace SmartLabParser
         public void RecognizeToExcel(string excelPath, string excelName)
         {
             Bitmap b = new Bitmap(Image);
-            _verticalBorderNums = new List <int>();
-            for (int i = StartBorderX; i < Image.Size.Width; i++)
-            {
-                Color color = b.GetPixel(i, StartBorderY);
-                if (color.R > 220 && color.R < 230)
-                {
-                    //MessageBox.Show("Test");
-                }
-                if (color.Name == TableBorderColorName)
-                {
-                    _verticalBorderNums.Add(i);
-                    i += StartBorderY;
-                }
-            }
-            _verticalBorderNums.Add(Image.Size.Width);
-
-            _horizontalBorderNums = new List<int>();
-            for (int j = StartBorderY; j < Image.Size.Height; j++)
-            {
-                Color color = b.GetPixel(StartBorderX, j);
-                if (color.Name == TableBorderColorName)
-                {
-                    _horizontalBorderNums.Add(j);
-                    j += StartBorderX;
-                }
-            }
-            _horizontalBorderNums.Add(Image.Size.Height);
-
+            _verticalBorderNums = SetBorderNums
+                    (b, StartBorderX, Image.Size.Width);
+            _horizontalBorderNums = SetBorderNums
+                    (b, StartBorderY, Image.Size.Height);
+            
             Bitmap[,] bitmaps = GetTableCellImages();
             string[,] texts = Recognize(bitmaps);
+        }
+
+        private List<int> SetBorderNums(Bitmap bitmap, int startBorderNum, int endOfBitmap)
+        {
+            List<int> borderNums = new List<int>();
+            for (int i = startBorderNum; i < endOfBitmap; i++)
+            {
+                Color color = bitmap.GetPixel(i, startBorderNum);
+                if (color.Name == TableBorderColorName)
+                {
+                    borderNums.Add(i);
+                    i += startBorderNum;
+                }
+            }
+            borderNums.Add(endOfBitmap);
+            return borderNums;
         }
 
         private static string[,] Recognize(Bitmap[,] bitmaps)
