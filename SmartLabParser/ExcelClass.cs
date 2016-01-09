@@ -496,6 +496,8 @@ public sealed class ExcelClass
     //без этого процесс висит
     public void Dispose()
     {
+        releaseObject(_pic);
+        releaseObject(_p);
         releaseObject(_range);
         releaseObject(_xlWorkSheet);
         releaseObject(_xlWorkBook);

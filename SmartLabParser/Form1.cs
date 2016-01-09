@@ -82,27 +82,62 @@ namespace SmartLabParser
                 {
                     continue;
                 }
-
-                string directory = Path.Combine(Application.StartupPath, new Uri(site).Host, "originals");
-                Directory.CreateDirectory(directory);
-                string path = Path.GetFullPath(Path.Combine(directory, GetPictureData(value.url)));
-                client.DownloadFile(value.url, path);
-                ImageClass imageClass = new ImageClass(path);
-                imageClass.Resize(10);
-                directory = Path.Combine(Application.StartupPath, new Uri(site).Host, "zoomed");
-                Directory.CreateDirectory(directory);
-                imageClass.SaveAs(directory);
-                imageClass.RecognizeToExcel(@"D:\Work\Coding\Github\repos\SmartLabParser\SmartLabParser\bin\Debug\smart-lab.ru\rAndreevLists", "1.xlsx");
-                ExcelClass xls = new ExcelClass();
-                xls.OpenDocument(Path.Combine(@"D:\Work\Coding\Github\repos\SmartLabParser\SmartLabParser\bin\Debug\smart-lab.ru\rAndreevLists", "1.xlsx"), false);
-                xls.AddPicture(path, "H1");
-                xls.CloseDocumentSave();
-                xls.Dispose();
-                //ImageToText(path);
+                string originalFullName;
+                ImageClass imageClass = SavePicture(site, client, value.url, out originalFullName);
+                Resize(imageClass, site);
+                SetXls(value.url, site, imageClass, originalFullName);
             }
         }
 
-        private static string GetPictureData(string url)
+        private static void SetXls(string url, string site, ImageClass imageClass, string origName)
+        {
+            string[] imaName = GetPictureDate(url).Split('.');
+            string fileName = "";
+            for (int i = 0; i < imaName.Length - 1; i++)
+            {
+                fileName += imaName[i] + '.';
+            }
+            fileName += "xlsx";
+
+            string directory = Path.Combine(Application.StartupPath, new Uri(site).Host, "rAndreevLists");
+            if (!File.Exists(Path.Combine(directory, fileName)))
+            {
+                imageClass.RecognizeToExcel(directory, fileName);
+                ExcelClass xls = new ExcelClass();
+                try
+                {
+                    xls.OpenDocument(Path.Combine(directory, fileName), false);
+                    xls.AddPicture(origName, "H1");
+                }
+                finally
+                {
+                    xls.CloseDocumentSave();
+                    xls.Dispose();
+                }
+            }
+        }
+
+        private static ImageClass SavePicture(string site, WebClient client, string address, out string origName)
+        {
+            string directory = Path.Combine(Application.StartupPath, new Uri(site).Host, "originals");
+            Directory.CreateDirectory(directory);
+            origName = Path.GetFullPath(Path.Combine(directory, GetPictureDate(address)));
+            if (!File.Exists(origName))
+            {
+                client.DownloadFile(address, origName);
+            }
+            return new ImageClass(origName);
+        }
+
+        private static void Resize(ImageClass imageClass, string site)
+        {
+            imageClass.Resize(10);
+            string directory = Path.Combine(Application.StartupPath, new Uri(site).Host, "zoomed");
+            Directory.CreateDirectory(directory);
+            imageClass.SaveAs(directory);
+        }
+
+        private static string GetPictureDate(string url)
         {
             string[] split = url.Split('/');
             return string.Format("{0}.{1}.{2}.png", split[10], split[9], split[8]);

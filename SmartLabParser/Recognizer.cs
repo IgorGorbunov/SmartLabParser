@@ -81,6 +81,8 @@ namespace SmartLabParser
             string sMax = "";
             foreach (KeyValuePair <string, int> pair in versions)
             {
+                if (string.IsNullOrEmpty(pair.Key))
+                    continue;
                 if (pair.Value > max)
                 {
                     sMax = pair.Key;
