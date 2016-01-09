@@ -93,6 +93,11 @@ namespace SmartLabParser
                 Directory.CreateDirectory(directory);
                 imageClass.SaveAs(directory);
                 imageClass.RecognizeToExcel(@"D:\Work\Coding\Github\repos\SmartLabParser\SmartLabParser\bin\Debug\smart-lab.ru\rAndreevLists", "1.xlsx");
+                ExcelClass xls = new ExcelClass();
+                xls.OpenDocument(Path.Combine(@"D:\Work\Coding\Github\repos\SmartLabParser\SmartLabParser\bin\Debug\smart-lab.ru\rAndreevLists", "1.xlsx"), false);
+                xls.AddPicture(path, "H1");
+                xls.CloseDocumentSave();
+                xls.Dispose();
                 //ImageToText(path);
             }
         }

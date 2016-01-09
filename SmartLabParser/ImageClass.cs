@@ -81,6 +81,11 @@ namespace SmartLabParser
                         xls.SetCellValue(j + 1, i + 1, texts[i, j].Trim());
                     }
                 }
+                xls.SetAutoFit("B:B");
+                xls.SetAutoFit("C:C");
+                xls.SetAutoFit("D:D");
+                xls.SetAutoFit("E:E");
+                xls.SetAutoFit("F:F");
             }
             finally
             {

@@ -116,7 +116,7 @@ public sealed class ExcelClass
         {
             start = _misValue;
         }            
-        _range = _xlWorkSheet.get_Range(start, end);
+        _range = _xlWorkSheet.Range[start, end];
     }
 
     //Скопировать выделенные ячейки
@@ -246,7 +246,7 @@ public sealed class ExcelClass
     /// <param name="value">Значение ячейки.</param>
     public void SetCellValue(string cell, string value)
     {
-        _range = _xlWorkSheet.get_Range(cell, _misValue);
+        _range = _xlWorkSheet.Range[cell, _misValue];
         _range.Value2 = value;
     }
 
@@ -258,7 +258,7 @@ public sealed class ExcelClass
     /// <param name="value">Значение ячейки.</param>
     public void SetCellValue(int colI, int rowI, string value)
     {
-        _range = _xlWorkSheet.get_Range(_xlWorkSheet.Cells[rowI, colI], _xlWorkSheet.Cells[rowI, colI]);
+        _range = _xlWorkSheet.Range[_xlWorkSheet.Cells[rowI, colI], _xlWorkSheet.Cells[rowI, colI]];
         _range.Value2 = value;
     }
 
@@ -523,13 +523,13 @@ public sealed class ExcelClass
     }
 
     //ЗАПИСЬ КАРТИНКИ В ЯЧЕЙКУ
-    public void WritePictureToCell(string path)
-    {            
+    public void AddPicture(string path, string cellAdress)
+    {
+        SelectCells(cellAdress, cellAdress);
         _p = _xlWorkSheet.Pictures(_misValue) as Excel.Pictures;           
         _pic = _p.Insert(path, _misValue);
         _pic.Left = Convert.ToDouble(_range.Left);
         _pic.Top = Convert.ToDouble(_range.Top);            
-
     }
 
     /// <summary>
@@ -566,6 +566,10 @@ public sealed class ExcelClass
         _range.Columns.AutoFit();
     }
 
+    /// <summary>
+    /// Метод добавляет пустую строку.
+    /// </summary>
+    /// <param name="rowNum">Номер строки</param>
     public void AddRow(int rowNum)
     {
         _range = (Excel.Range)_xlWorkSheet.Rows[rowNum, _misValue];
