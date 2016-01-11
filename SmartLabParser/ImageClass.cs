@@ -6,11 +6,11 @@ using System.IO;
 
 namespace SmartLabParser
 {
-    public class ImageClass 
+    public class ImageClass : IDisposable
     {
         private string _fullPath;
         private readonly string _fileName;
-        public Image Image;
+        public Image BitImage;
 
         //private const string TableBorderColorName = "ffdfe1e2";   // x3,0
         private const string TableBorderColorName = "ffdfe1e2";     // x10,0
@@ -23,43 +23,51 @@ namespace SmartLabParser
         {
             _fullPath = fullPath;
             _fileName = Path.GetFileName(_fullPath);
-            Image = new Bitmap(_fullPath);
+            BitImage = new Bitmap(_fullPath);
         }
 
         public ImageClass(Bitmap bitmap)
         {
-            Image = bitmap;
+            BitImage = bitmap;
         }
 
 
         public void Resize(double ratio)
         {
-            int width = (int) Math.Round(Image.Size.Width * ratio);
-            int height = (int)Math.Round(Image.Size.Height * ratio);
-            Image result = new Bitmap(width, height);
-            using (Graphics g = Graphics.FromImage(result))
+            int width = (int) Math.Round(BitImage.Size.Width * ratio);
+            int height = (int)Math.Round(BitImage.Size.Height * ratio);
+            using (Image result = new Bitmap(width, height))
             {
-                g.InterpolationMode = InterpolationMode.HighQualityBicubic;
-                g.DrawImage(Image, 0, 0, width, height);
-                g.Dispose();
+                using (Graphics g = Graphics.FromImage(result))
+                {
+                    g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                    g.DrawImage(BitImage, 0, 0, width, height);
+                    g.Dispose();
+                }
+                BitImage = (Image) result.Clone();
             }
-            Image = result;
         }
 
         public void SaveAs(string newPath)
         {
             _fullPath = Path.Combine(newPath, _fileName);
-            Image.Save(_fullPath);
+            if (File.Exists(_fullPath))
+            {
+                File.Delete(_fullPath);
+            }
+            BitImage.Save(_fullPath);
         }
 
         public void RecognizeToExcel(string excelPath, string excelName)
         {
-            Bitmap b = new Bitmap(Image);
-            _verticalBorderNums = SetBorderNums
-                    (b, StartBorderX, Image.Size.Width, true);
-            _horizontalBorderNums = SetBorderNums
-                    (b, StartBorderY, Image.Size.Height, false);
-            
+            using (Bitmap b = new Bitmap(BitImage))
+            {
+                _verticalBorderNums = SetBorderNums
+                        (b, StartBorderX, BitImage.Size.Width, true);
+                _horizontalBorderNums = SetBorderNums
+                        (b, StartBorderY, BitImage.Size.Height, false);
+            }
+
             Bitmap[,] bitmaps = GetTableCellImages();
             string[,] texts = Recognize(bitmaps);
             AddToExcel(texts, excelPath, excelName);
@@ -126,6 +134,10 @@ namespace SmartLabParser
             {
                 for (int j = 0; j < bitmaps.GetLength(1); j++)
                 {
+                    if (i == 24 & j == 4)
+                    {
+                        
+                    }
                     result[i, j] = Recognizer.Recognize(bitmaps[i, j], 10);
                     Indicator.IncRecognizeCellImage();
                 }
@@ -159,12 +171,24 @@ namespace SmartLabParser
 
             using (Graphics g = Graphics.FromImage(target))
             {
-                g.DrawImage(Image, new Rectangle(0, 0, target.Width, target.Height),
+                g.DrawImage(BitImage, new Rectangle(0, 0, target.Width, target.Height),
                             cropRect,
                             GraphicsUnit.Pixel);
             }
             return target;
         }
+
+        #region Implementation of IDisposable
+
+        /// <summary>
+        /// Выполняет определяемые приложением задачи, связанные с высвобождением или сбросом неуправляемых ресурсов.
+        /// </summary>
+        public void Dispose()
+        {
+            BitImage.Dispose();
+        }
+
+        #endregion
     }
 }
 

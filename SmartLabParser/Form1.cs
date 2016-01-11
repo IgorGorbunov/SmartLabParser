@@ -84,12 +84,14 @@ namespace SmartLabParser
                     continue;
                 }
                 string originalFullName;
-                ImageClass imageClass = SavePicture(site, client, value.url, out originalFullName);
-                ResizeImage(imageClass, site);
-                SetXls(value.url, site, imageClass, originalFullName);
+                using (ImageClass imageClass = SavePicture(site, client, value.url, out originalFullName))
+                {
+                    ResizeImage(imageClass, site);
+                    SetXls(value.url, site, imageClass, originalFullName);
+                }
                 Indicator.IncDownloadImage();
             }
-            MessageBox.Show("That`s all!");
+            
         }
 
         private static void SetXls(string url, string site, ImageClass imageClass, string origName)
@@ -164,6 +166,7 @@ namespace SmartLabParser
                 }
                 DownloadFiles(page);
             }
+            MessageBox.Show("That`s all!");
         }
 
 

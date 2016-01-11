@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Windows.Forms;
 using Puma.Net;
 
 namespace SmartLabParser
@@ -9,8 +12,7 @@ namespace SmartLabParser
         public static string Recognize(Bitmap bitmap)
         {
             string result = "";
-            PumaPage image = new PumaPage(bitmap);
-            using (image)
+            using (PumaPage image = new PumaPage(bitmap))
             {
                 image.FileFormat = PumaFileFormat.TxtAnsi;
                 image.AutoRotateImage = false;
@@ -45,36 +47,52 @@ namespace SmartLabParser
         public static string Recognize(Bitmap bitmap, int series)
         {
             Dictionary <string, int> versions = new Dictionary <string, int>();
-            ImageClass image = new ImageClass(bitmap);
-            for (int i = 0; i < series; i++)
+
+            using (ImageClass image = new ImageClass(bitmap))
             {
-                string result = "";
-                try
+                for (int i = 0; i < series; i++)
                 {
-                    result = Recognize(new Bitmap(image.Image));
-                }
-                catch (RecognitionEngineException exception)
-                {
-                    //если ошибка из-за отсутствия текста
-                    if (exception.ErrorCode == 6553609)
+                    string result = "";
+                    try
                     {
-                        if (!versions.ContainsKey(result))
+                        using (Bitmap b = new Bitmap(image.BitImage))
                         {
-                            versions.Add(result, 1);
+                            result = Recognize(b);
                         }
-                        break;
                     }
-                    throw;
+                    catch (RecognitionEngineException exception)
+                    {
+                        //если ошибка из-за отсутствия текста
+                        if (exception.ErrorCode == 6553609)
+                        {
+                            if (!versions.ContainsKey(result))
+                            {
+                                versions.Add(result, 1);
+                            }
+                            break;
+                        }
+                        //если ошибка из-за отсутствия текста[2]
+                        if (exception.ErrorCode == 6684676)
+                        {
+                            if (!versions.ContainsKey(result))
+                            {
+                                versions.Add(result, 1);
+                            }
+                            break;
+                        }
+                        bitmap.Save(Path.Combine(Application.StartupPath, bitmap.GetHashCode().ToString() + ".png"), ImageFormat.Png);
+                        throw;
+                    }
+                    if (versions.ContainsKey(result))
+                    {
+                        versions[result]++;
+                    }
+                    else
+                    {
+                        versions.Add(result, 1);
+                    }
+                    image.Resize(0.9);
                 }
-                if (versions.ContainsKey(result))
-                {
-                    versions[result]++;
-                }
-                else
-                {
-                    versions.Add(result, 1);
-                }
-                image.Resize(0.9);
             }
 
             int max = 0;
