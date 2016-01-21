@@ -455,13 +455,6 @@ public sealed class ExcelClass
         return (int)_range.Interior.ColorIndex;
     }
 
-    /// <summary>
-    /// Закрыть документ
-    /// </summary>
-    public void CloseDocument()
-    {
-        CloseDocument(false);
-    }
 
     /// <summary>
     /// Закрыть документ с сохранением.
