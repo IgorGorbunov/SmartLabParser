@@ -172,6 +172,7 @@ namespace SmartLabParser
         private void bAddStats_Click(object sender, EventArgs e)
         {
             Statistics.AddStats(dtpAddStats.Value);
+            MessageBox.Show("всё!");
         }
 
 
