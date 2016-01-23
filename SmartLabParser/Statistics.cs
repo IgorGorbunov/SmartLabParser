@@ -15,7 +15,7 @@ namespace SmartLabParser
         {
             Dictionary <string, string> dict = new Dictionary <string, string>();
             SetKodesList(dict);
-            DateTime toDate = new DateTime(2015, 07, 31);
+            DateTime toDate = new DateTime(2014, 10, 3);
             ReadLists(date, toDate, PagesFolder, dict);
         }
 
@@ -88,6 +88,19 @@ namespace SmartLabParser
                 try
                 {
                     string date = GetDate(xls.GetCellStringValue(2, 2));
+                    string fileDate = Path.GetFileNameWithoutExtension(fileName);
+                    if (string.IsNullOrEmpty(date))
+                    {
+                        date = fileDate;
+                    }
+                    else
+                    {
+                        if (date != fileDate)
+                        {
+                            MessageBox.Show(date + '\n' + fileDate + '\n' + "Даты разные!");
+                        }
+                    }
+
                     int iRow = 9;
                     string name = xls.GetCellStringValue(2, iRow);
                     while (!string.IsNullOrEmpty(name))
@@ -103,6 +116,7 @@ namespace SmartLabParser
                         else
                         {
                             if (orientation != "ЛОНГ" || 
+                                orientation != "Л0НГ" ||
                                 orientation != "шорт")
                             {
                                 break;
@@ -168,6 +182,10 @@ namespace SmartLabParser
                             break;
                         }
                         iRow--;
+                        if (iRow == 0)
+                        {
+                            MessageBox.Show("Нет такой даты (" + date + ") в " + name);
+                        }
                         csvDate = GetCsvDate(xls.GetCellStringValue(3, iRow));
                     }
                 }
