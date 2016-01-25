@@ -495,7 +495,7 @@ public sealed class ExcelClass
         releaseObject(_xlWorkSheet);
         releaseObject(_xlWorkBook);
         releaseObject(_xlApp);
-        GC.GetTotalMemory(true);
+        GC.Collect();
     }
 
     private void releaseObject(object obj)

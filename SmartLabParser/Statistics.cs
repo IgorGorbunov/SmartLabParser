@@ -15,7 +15,7 @@ namespace SmartLabParser
         {
             Dictionary <string, string> dict = new Dictionary <string, string>();
             SetKodesList(dict);
-            DateTime toDate = new DateTime(2014, 10, 3);
+            DateTime toDate = new DateTime(2014, 3, 11);
             ReadLists(date, toDate, PagesFolder, dict);
         }
 
@@ -185,6 +185,7 @@ namespace SmartLabParser
                         if (iRow == 0)
                         {
                             MessageBox.Show("Нет такой даты (" + date + ") в " + name);
+                            break;
                         }
                         csvDate = GetCsvDate(xls.GetCellStringValue(3, iRow));
                     }
